@@ -9,3 +9,8 @@ mongoose.connect('mongodb://localhost:27017/wtwr_db');
 app.listen(PORT, () => {
   console.log(`App listening at port ${PORT}`);
 });
+
+/*
+app.use('/users', require('./routes/users'));
+app.use('/clothing-items', require('./routes/clothingItems'));
+*/
