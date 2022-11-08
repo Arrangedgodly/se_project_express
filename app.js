@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const userRouter = require('./routes/users');
+const clothingItemsRouter = require('./routes/clothingItems');
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -14,7 +16,7 @@ app.listen(PORT, () => {
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/users', require('./routes/users'));
+app.use('/users', userRouter);
 
 app.use((req, res, next) => {
   req.user = {
@@ -23,4 +25,4 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/clothing-items', require('./routes/clothingItems'));
+app.use('/clothing-items', clothingItemsRouter);

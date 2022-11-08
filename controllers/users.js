@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const { ERROR_CODES } = require('../utils/errors');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -15,12 +16,15 @@ module.exports.getUser = (req, res) => {
       throw error;
     })
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => res.status(500).send({ message: `${err.message}` }));
+    .catch((err) => {res.status(500).send({ message: `${err.message}` })});
 };
 
 module.exports.createUser = (req, res) => {
   const { name, avatar } = req.body;
   User.create({ name, avatar })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: `${err.message}` }));
+    .then((user) => res.status(200).send({ data: user }))
+    .catch((err) => {
+      if (err.name = 'ValidationError') return res.status(ERROR_CODES.BadRequest).send({ message: "There is an error validating your POST request"})
+      res.status(500).send({ message: `${err.name}` })
+    });
 };
