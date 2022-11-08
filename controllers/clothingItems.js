@@ -8,10 +8,10 @@ module.exports.getClothingItems = (req, res) => {
 
 module.exports.createClothingItem = (req, res) => {
   const {
-    name, weather, imageUrl
+    name, weather, imageUrl, ownerId
   } = req.body;
   ClothingItem.create({
-    name, weather, imageUrl
+    name, weather, imageUrl, owner: ownerId
   })
     .then((item) => res.send({ clothingItem: item }))
     .catch(() => res.status(500).send({ message: 'Error' }));
