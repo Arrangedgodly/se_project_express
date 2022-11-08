@@ -8,15 +8,18 @@ module.exports.getClothingItems = (req, res) => {
 
 module.exports.createClothingItem = (req, res) => {
   const {
-    name, weather, imageUrl, ownerId,
+    name, weather, imageUrl
   } = req.body;
   ClothingItem.create({
-    name, weather, imageUrl, owner: ownerId,
+    name, weather, imageUrl
   })
     .then((item) => res.send({ clothingItem: item }))
     .catch(() => res.status(500).send({ message: 'Error' }));
 };
 
 module.exports.deleteClothingItem = (req, res) => {
-
+  const { id } = req.body;
+  ClothingItem.findByIdAndDelete({ id })
+    .then(item => console.log(item))
+    .catch(() => res.status(500).send({ message: 'Error' }));
 };
