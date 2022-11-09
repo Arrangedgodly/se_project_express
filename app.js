@@ -20,7 +20,7 @@ app.use('/users', userRouter);
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '6369e136a39ce1c576f1b1c2'
+    _id: '6369e136a39ce1c576f1b1c2',
   };
   next();
 });
