@@ -25,4 +25,4 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/clothing-items', clothingItemsRouter);
+app.use('/items', clothingItemsRouter);
