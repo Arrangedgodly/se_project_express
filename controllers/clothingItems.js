@@ -6,7 +6,7 @@ const returnDefaultError = (res) => res.status(ERROR_CODES.DefaultError).send({ 
 module.exports.getClothingItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send({ items }))
-    .catch((err) => returnDefaultError(res));
+    .catch(() => returnDefaultError(res));
 };
 
 module.exports.createClothingItem = (req, res) => {
@@ -27,7 +27,7 @@ module.exports.deleteClothingItem = (req, res) => {
   const { id } = req.body;
   ClothingItem.findByIdAndDelete({ id })
     .then((item) => res.status(200).send({ clothingItem: item }))
-    .catch((err) => returnDefaultError(res));
+    .catch(() => returnDefaultError(res));
 };
 
 module.exports.likeItem = (req, res) => {
