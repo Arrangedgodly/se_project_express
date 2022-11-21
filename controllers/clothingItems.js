@@ -16,7 +16,7 @@ module.exports.createClothingItem = (req, res) => {
   ClothingItem.create({
     name, weather, imageUrl, owner: req.user,
   })
-    .then((item) => res.status(200).send({ clothingItem: item }))
+    .then((item) => res.status(201).send({ clothingItem: item }))
     .catch((err) => {
       if (err.name === 'ValidationError') return res.status(ERROR_CODES.BadRequest).send({ message: 'There was an error finding the requested clothing item' });
       return returnDefaultError(res);
@@ -24,10 +24,14 @@ module.exports.createClothingItem = (req, res) => {
 };
 
 module.exports.deleteClothingItem = (req, res) => {
-  const { id } = req.body;
-  ClothingItem.findByIdAndDelete({ id })
+  ClothingItem.findByIdAndDelete(req.params.itemId)
     .then((item) => res.status(200).send({ clothingItem: item }))
-    .catch(() => returnDefaultError(res));
+    .catch((err) => {
+      console.log(err.name);
+      if (err.name === 'CastError') return res.status(ERROR_CODES.BadRequest).send({ message: 'There was an error with the delete request' });
+      if (err.name === 'DocumentNotFoundError') return res.status(ERROR_CODES.NotFound).send({ message: 'Item not found' });
+      return returnDefaultError(res);
+    });
 };
 
 module.exports.likeItem = (req, res) => {
@@ -40,6 +44,7 @@ module.exports.likeItem = (req, res) => {
     .then((data) => res.status(200).send({ data }))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') return res.status(ERROR_CODES.NotFound).send({ message: 'User not found' });
+      if (err.name === 'CastError') return res.status(ERROR_CODES.BadRequest).send({ message: 'There was an error with the like request' });
       return returnDefaultError(res);
     });
 };
@@ -53,7 +58,9 @@ module.exports.dislikeItem = (req, res) => {
     .orFail()
     .then((data) => res.status(200).send({ data }))
     .catch((err) => {
+      console.log(err.name);
       if (err.name === 'DocumentNotFoundError') return res.status(ERROR_CODES.NotFound).send({ message: 'User not found' });
+      if (err.name === 'CastError') return res.status(ERROR_CODES.BadRequest).send({ message: 'There was an error with the unlike request' });
       return returnDefaultError(res);
     });
 };
