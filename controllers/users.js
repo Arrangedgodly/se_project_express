@@ -16,6 +16,7 @@ module.exports.getUser = (req, res) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') return res.status(ERROR_CODES.NotFound).send({ message: 'User not found' });
+      if (err.name === 'CastError') return res.status(ERROR_CODES.BadRequest).send({ message: 'There was an error with the request' });
       return returnDefaultError(res);
     });
 };

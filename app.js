@@ -1,13 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
 const userRouter = require('./routes/users');
 const clothingItemsRouter = require('./routes/clothingItems');
 
 const app = express();
-const { PORT = 3001 } = process.env;
+const { PORT = 3001, DATABASE = 'mongodb://localhost:27017/wtwr_db' } = process.env;
 
-mongoose.connect('mongodb://localhost:27017/wtwr_db');
+mongoose.connect(DATABASE);
 
 app.listen(PORT, () => {
   console.log(`App live and listening at port ${PORT}`);
@@ -15,6 +16,7 @@ app.listen(PORT, () => {
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(helmet());
 
 app.use('/users', userRouter);
 
@@ -26,3 +28,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/items', clothingItemsRouter);
+
+app.use('*', (req, res) => {
+  res.status(404).send({ message: 'Requested resource not found' });
+});
