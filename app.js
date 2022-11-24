@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const userRouter = require('./routes/users');
 const clothingItemsRouter = require('./routes/clothingItems');
+const { createUser, login } = require('./controllers/users');
 
 const app = express();
 const { PORT = 3001, DATABASE = 'mongodb://localhost:27017/wtwr_db' } = process.env;
@@ -18,14 +19,10 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
 
-app.use('/users', userRouter);
+app.post('/signin', login);
+app.post('/signup', createUser);
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '6369e136a39ce1c576f1b1c2',
-  };
-  next();
-});
+app.use('/users', userRouter);
 
 app.use('/items', clothingItemsRouter);
 
