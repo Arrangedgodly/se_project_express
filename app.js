@@ -2,22 +2,25 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
+const cors = require('cors');
 const userRouter = require('./routes/users');
 const clothingItemsRouter = require('./routes/clothingItems');
 const { createUser, login } = require('./controllers/users');
 
 const app = express();
-const { PORT = 3001, DATABASE = 'mongodb://localhost:27017/wtwr_db' } = process.env;
 
-mongoose.connect(DATABASE);
+require('dotenv').config();
 
-app.listen(PORT, () => {
-  console.log(`App live and listening at port ${PORT}`);
+mongoose.connect(process.env.DATABASE);
+
+app.listen(process.env.PORT, () => {
+  console.log(`App live and listening at port ${process.env.PORT}`);
 });
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
+app.use(cors());
 
 app.post('/signin', login);
 app.post('/signup', createUser);
