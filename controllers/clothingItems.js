@@ -24,8 +24,14 @@ module.exports.createClothingItem = (req, res) => {
 };
 
 module.exports.deleteClothingItem = (req, res) => {
-  ClothingItem.findByIdAndDelete(req.params.itemId)
-    .then((item) => res.status(200).send({ clothingItem: item }))
+  ClothingItem.findById(req.params.itemId)
+    .then((item) => {
+      if (item.owner === req.params._id) {
+        return res.status(200).send({ clothingItem: item })
+      } else {
+        return res.status(ERROR_CODES.PermissionsError).send({ message: "Insuffient permissions to delete item"})
+      }
+    })
     .catch((err) => {
       console.log(err.name);
       if (err.name === 'CastError') return res.status(ERROR_CODES.BadRequest).send({ message: 'There was an error with the delete request' });
