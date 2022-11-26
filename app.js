@@ -9,12 +9,12 @@ const { createUser, login } = require('./controllers/users');
 
 const app = express();
 
-require('dotenv').config();
+const { PORT=3001, DATABASE="mongodb://localhost:27017/wtwr_db" } = process.env;
 
-mongoose.connect(process.env.DATABASE);
+mongoose.connect(DATABASE);
 
-app.listen(process.env.PORT, () => {
-  console.log(`App live and listening at port ${process.env.PORT}`);
+app.listen(PORT, () => {
+  console.log(`App live and listening at port ${PORT}`);
 });
 
 app.use(express.json());
