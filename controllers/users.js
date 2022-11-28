@@ -26,11 +26,15 @@ module.exports.getCurrentUser = (req, res) => {
 };
 
 module.exports.patchCurrentUser = (req, res) => {
-  const { _id, name, email, avatar, password } = req.body;
+  const {
+    _id, name, email, avatar, password,
+  } = req.body;
   let newPassword;
   bcrypt.hash(password, 10)
-    .then((hash) => {newPassword = hash});
-  User.findByIdAndUpdate({ _id }, { name, email, avatar, password: newPassword }, { new: true })
+    .then((hash) => { newPassword = hash; });
+  User.findByIdAndUpdate({ _id }, {
+    name, email, avatar, password: newPassword,
+  }, { new: true })
     .orFail()
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
@@ -46,20 +50,19 @@ module.exports.createUser = (req, res) => {
   } = req.body;
   User.findOne({ email })
     .then((user) => {
-     if (user) {
-      return res.status(ERROR_CODES.PermissionsError).send({ message: 'There is already an existing user with this email' })
-     }
-     bcrypt.hash(password, 10)
-      .then((hash) => User.create({
-        name, avatar, email, password: hash,
-      })
-        .then((user) => res.status(200).send({ data: user }))
-        .catch((err) => {
-          if (err.name === 'ValidationError') return res.status(ERROR_CODES.BadRequest).send({ message: 'There is an error validating your POST request' });
-          return returnDefaultError(res);
-        }));
-    })
-  
+      if (user) {
+        return res.status(ERROR_CODES.PermissionsError).send({ message: 'There is already an existing user with this email' });
+      }
+      bcrypt.hash(password, 10)
+        .then((hash) => User.create({
+          name, avatar, email, password: hash,
+        })
+          .then((newUser) => res.status(200).send({ data: newUser }))
+          .catch((err) => {
+            if (err.name === 'ValidationError') return res.status(ERROR_CODES.BadRequest).send({ message: 'There is an error validating your POST request' });
+            return returnDefaultError(res);
+          }));
+    });
 };
 
 module.exports.login = (req, res) => {
