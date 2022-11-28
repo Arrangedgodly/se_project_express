@@ -27,10 +27,9 @@ module.exports.deleteClothingItem = (req, res) => {
   ClothingItem.findById(req.params.itemId)
     .then((item) => {
       if (item.owner === req.params._id) {
-        return res.status(200).send({ clothingItem: item })
-      } else {
-        return res.status(ERROR_CODES.PermissionsError).send({ message: "Insuffient permissions to delete item"})
+        return res.status(200).send({ clothingItem: item });
       }
+      return res.status(ERROR_CODES.PermissionsError).send({ message: 'Insuffient permissions to delete item' });
     })
     .catch((err) => {
       console.log(err.name);
