@@ -15,7 +15,7 @@ module.exports.getUsers = (req, res) => {
 module.exports.getCurrentUser = (req, res) => {
   User.findById({ _id: req.user._id })
     .orFail()
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
 
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') return res.status(ERROR_CODES.NotFound).send({ message: 'User not found' });

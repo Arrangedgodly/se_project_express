@@ -5,7 +5,7 @@ const returnDefaultError = (res) => res.status(ERROR_CODES.DefaultError).send({ 
 
 module.exports.getClothingItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.send({ items }))
+    .then((items) => res.send(items))
     .catch(() => returnDefaultError(res));
 };
 
