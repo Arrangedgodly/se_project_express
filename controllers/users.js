@@ -26,10 +26,10 @@ module.exports.getCurrentUser = (req, res) => {
 
 module.exports.patchCurrentUser = (req, res) => {
   const {
-    email, avatar,
+    name, avatar,
   } = req.body;
   User.findByIdAndUpdate({ _id: req.user._id }, {
-    email, avatar,
+    name, avatar,
   }, { new: true, runValidators: true })
     .orFail()
     .then((user) => res.send({ data: user }))
