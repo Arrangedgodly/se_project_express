@@ -16,7 +16,7 @@ module.exports.createClothingItem = (req, res) => {
   ClothingItem.create({
     name, weather, imageUrl, owner: req.user,
   })
-    .then((item) => res.status(201).send({ clothingItem: item }))
+    .then((item) => res.status(201).send(item))
     .catch((err) => {
       if (err.name === 'ValidationError') return res.status(ERROR_CODES.BadRequest).send({ message: 'There was an error finding the requested clothing item' });
       return returnDefaultError(res);
