@@ -32,7 +32,7 @@ module.exports.patchCurrentUser = (req, res) => {
     name, avatar,
   }, { new: true, runValidators: true })
     .orFail()
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') return res.status(ERROR_CODES.NotFound).send({ message: 'User not found' });
       if (err.name === 'CastError' || err.name === 'ValidationError') return res.status(ERROR_CODES.BadRequest).send({ message: 'There was an error with the request' });
