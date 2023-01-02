@@ -47,7 +47,7 @@ module.exports.likeItem = (req, res) => {
     { new: true },
   )
     .orFail()
-    .then((data) => res.send({ data }))
+    .then((data) => res.send(data))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') return res.status(ERROR_CODES.NotFound).send({ message: 'Item not found' });
       if (err.name === 'CastError') return res.status(ERROR_CODES.BadRequest).send({ message: 'There was an error with the like request' });
@@ -62,7 +62,7 @@ module.exports.dislikeItem = (req, res) => {
     { new: true },
   )
     .orFail()
-    .then((data) => res.send({ data }))
+    .then((data) => res.send(data))
     .catch((err) => {
       console.log(err.name);
       if (err.name === 'DocumentNotFoundError') return res.status(ERROR_CODES.NotFound).send({ message: 'Item not found' });
