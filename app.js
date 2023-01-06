@@ -9,7 +9,7 @@ const { createUser, login } = require('./controllers/users');
 
 const app = express();
 
-const { PORT = 3001, DATABASE = 'mongodb://localhost:27017/wtwr_db' } = process.env;
+const { PORT = 3000, DATABASE = 'mongodb://localhost:27017/wtwr_db' } = process.env;
 
 mongoose.connect(DATABASE);
 
