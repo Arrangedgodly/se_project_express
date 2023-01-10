@@ -13,6 +13,17 @@ const { PORT = 3000, DATABASE = 'mongodb://localhost:27017/wtwr_db' } = process.
 
 mongoose.connect(DATABASE);
 
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'An error occurred on the server'
+        : message
+    });
+});
+
 app.listen(PORT, () => {
   console.log(`App live and listening at port ${PORT}`);
 });

@@ -1,10 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { ERROR_CODES } = require('../utils/errors');
 const { JWT_SECRET } = require('../utils/config');
+const NotFoundError = require('../errors/not-found-err');
 
-const returnDefaultError = (res) => res.status(ERROR_CODES.DefaultError).send({ message: 'An error has occurred on the server.' });
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -15,13 +14,14 @@ module.exports.getUsers = (req, res) => {
 module.exports.getCurrentUser = (req, res) => {
   User.findById({ _id: req.user._id })
     .orFail()
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('No user with matching ID found');
+      }
+      res.send(user)
+    })
 
-    .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') return res.status(ERROR_CODES.NotFound).send({ message: 'User not found' });
-      if (err.name === 'CastError') return res.status(ERROR_CODES.BadRequest).send({ message: 'There was an error with the request' });
-      return returnDefaultError(res);
-    });
+    .catch(next);
 };
 
 module.exports.patchCurrentUser = (req, res) => {
