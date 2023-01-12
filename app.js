@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { celebrate, Joi, errors } = require('celebrate');
 const helmet = require('helmet');
 const cors = require('cors');
 const userRouter = require('./routes/users');
@@ -9,9 +10,18 @@ const { createUser, login } = require('./controllers/users');
 
 const app = express();
 
-const { PORT = 3000, DATABASE = 'mongodb://localhost:27017/wtwr_db' } = process.env;
+const { PORT = 3001, DATABASE = 'mongodb://localhost:27017/wtwr_db' } = process.env;
+
+const validateURL = (value, helpers) => {
+  if (validator.isURL(value)) {
+    return value;
+  }
+  return helpers.error('string.uri');
+};
 
 mongoose.connect(DATABASE);
+
+app.use(errors());
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
@@ -33,8 +43,20 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(cors());
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required(),
+    password: Joi.string().required()
+  })
+}), login);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    avatar: Joi.string().required().custom(validateURL),
+    email: Joi.string().required(),
+    password: Joi.string().required()
+  })
+}), createUser);
 
 app.use('/users', userRouter);
 
