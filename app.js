@@ -7,11 +7,13 @@ const cors = require("cors");
 const userRouter = require("./routes/users");
 const clothingItemsRouter = require("./routes/clothingItems");
 const { createUser, login } = require("./controllers/users");
-const { requestLogger, errorLogger } = require('./middlewares/logger'); 
+const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const app = express();
 
-const { PORT = 3001, DATABASE = "mongodb://localhost:27017/wtwr_db" } =
+require('dotenv').config();
+
+const { PORT, DATABASE } =
   process.env;
 
 const validateURL = (value, helpers) => {

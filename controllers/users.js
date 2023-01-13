@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const { JWT_SECRET } = require("../utils/config");
+const { JWT_SECRET } = process.env;
 const NotFoundError = require("../errors/not-found-err");
 const ExistingError = require("../errors/existing-err");
 
@@ -16,7 +16,7 @@ module.exports.getCurrentUser = (req, res, next) => {
     .orFail()
     .then((user) => {
       if (!user) {
-        throw new NotFoundError("No user with matching ID found");
+        next(new NotFoundError("No user with matching ID found"));
       }
 
       res.send(user);
@@ -38,7 +38,7 @@ module.exports.patchCurrentUser = (req, res, next) => {
     .orFail()
     .then((user) => {
       if (!user) {
-        throw new NotFoundError("No user with matching ID found");
+        next(new NotFoundError("No user with matching ID found"));
       }
 
       res.send(user);
@@ -50,8 +50,10 @@ module.exports.createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   User.findOne({ email }).then((user) => {
     if (user) {
-      throw new ExistingError(
-        "There is already a user existing with this email address"
+      next(
+        new ExistingError(
+          "There is already a user existing with this email address"
+        )
       );
     }
     return bcrypt.hash(password, 10).then((hash) =>
@@ -79,7 +81,7 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Incorrect email or password')
+        next(new NotFoundError("Incorrect email or password"));
       }
       res.send({
         token: jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "7d" }),
