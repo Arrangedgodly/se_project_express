@@ -33,7 +33,7 @@ app.post(
   "/signin",
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().required(),
+      email: Joi.string().email().required(),
       password: Joi.string().required(),
     }),
   }),
@@ -45,7 +45,7 @@ app.post(
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
       avatar: Joi.string().required().custom(validateURL),
-      email: Joi.string().required(),
+      email: Joi.string().email().required(),
       password: Joi.string().required(),
     }),
   }),
@@ -62,6 +62,7 @@ app.use(errors());
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
+  console.error(err);
   res.status(statusCode).send({
     message: statusCode === 500 ? "An error occurred on the server" : message,
   });

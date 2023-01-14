@@ -38,23 +38,26 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
+userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password, next) {
   return this.findOne({ email }).select('+password')
     .orFail()
     .then((user) => {
+      console.log(user)
       if (!user) {
-        return Promise.reject(new AuthError('Incorrect Email or Password'));
+        return next(new AuthError('Incorrect Email or Password'));
       }
 
       return bcrypt.compare(password, user.password)
         .then((matched) => {
+          console.log(matched)
           if (!matched) {
-            return Promise.reject(new AuthError('Incorrect Email or Password'));
+            return next(new AuthError('Incorrect Email or Password'));
           }
 
           return user;
         });
-    });
+    })
+    .catch(next);
 };
 
 module.exports = mongoose.model('user', userSchema);

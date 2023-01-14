@@ -1,6 +1,7 @@
 const ClothingItem = require("../models/clothingItem");
 const PermissionsError = require("../errors/permissions-err");
 const NotFoundError = require("../errors/not-found-err");
+const BadRequestError = require("../errors/bad-request-err");
 
 module.exports.getClothingItems = (req, res, next) => {
   ClothingItem.find({})
@@ -23,6 +24,9 @@ module.exports.createClothingItem = (req, res, next) => {
     owner: req.user,
   })
     .then((item) => {
+      if (!item) {
+        return next(new BadRequestError('There was a problem with the data submitted'))
+      }
       return res.status(201).send(item);
     })
     .catch(next);
