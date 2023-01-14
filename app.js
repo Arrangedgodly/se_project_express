@@ -8,20 +8,13 @@ const userRouter = require("./routes/users");
 const clothingItemsRouter = require("./routes/clothingItems");
 const { createUser, login } = require("./controllers/users");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
+const validateURL = require('./middlewares/validators');
 
 const app = express();
 
-require('dotenv').config();
+require("dotenv").config();
 
-const { PORT, DATABASE } =
-  process.env;
-
-const validateURL = (value, helpers) => {
-  if (validator.isURL(value)) {
-    return value;
-  }
-  return helpers.error("string.uri");
-};
+const { PORT, DATABASE } = process.env;
 
 mongoose.connect(DATABASE);
 

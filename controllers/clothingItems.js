@@ -2,11 +2,11 @@ const ClothingItem = require("../models/clothingItem");
 const PermissionsError = require("../errors/permissions-err");
 const NotFoundError = require("../errors/not-found-err");
 
-module.exports.getClothingItems = (req, res) => {
+module.exports.getClothingItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => {
       if (!items) {
-        next(new NotFoundError("There were no items found"));
+        return next(new NotFoundError("There were no items found"));
       } else {
         return res.send(items);
       }
@@ -14,7 +14,7 @@ module.exports.getClothingItems = (req, res) => {
     .catch(next);
 };
 
-module.exports.createClothingItem = (req, res) => {
+module.exports.createClothingItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   ClothingItem.create({
     name,
@@ -28,7 +28,7 @@ module.exports.createClothingItem = (req, res) => {
     .catch(next);
 };
 
-module.exports.deleteClothingItem = (req, res) => {
+module.exports.deleteClothingItem = (req, res, next) => {
   ClothingItem.findById(req.params.itemId)
     .orFail()
     .then((item) => {
@@ -37,7 +37,7 @@ module.exports.deleteClothingItem = (req, res) => {
           res.send(item);
         });
       } else {
-        next(
+        return next(
           new PermissionsError("You do not have permission to delete this item")
         );
       }
@@ -45,7 +45,7 @@ module.exports.deleteClothingItem = (req, res) => {
     .catch(next);
 };
 
-module.exports.likeItem = (req, res) => {
+module.exports.likeItem = (req, res, next) => {
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $addToSet: { likes: req.user._id } },
@@ -58,7 +58,7 @@ module.exports.likeItem = (req, res) => {
     .catch(next);
 };
 
-module.exports.dislikeItem = (req, res) => {
+module.exports.dislikeItem = (req, res, next) => {
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },

@@ -16,7 +16,7 @@ module.exports.getCurrentUser = (req, res, next) => {
     .orFail()
     .then((user) => {
       if (!user) {
-        next(new NotFoundError("No user with matching ID found"));
+        return next(new NotFoundError("No user with matching ID found"));
       }
 
       res.send(user);
@@ -38,7 +38,7 @@ module.exports.patchCurrentUser = (req, res, next) => {
     .orFail()
     .then((user) => {
       if (!user) {
-        next(new NotFoundError("No user with matching ID found"));
+        return next(new NotFoundError("No user with matching ID found"));
       }
 
       res.send(user);
@@ -50,7 +50,7 @@ module.exports.createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   User.findOne({ email }).then((user) => {
     if (user) {
-      next(
+      return next(
         new ExistingError(
           "There is already a user existing with this email address"
         )
@@ -81,7 +81,7 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user) {
-        next(new NotFoundError("Incorrect email or password"));
+        return next(new NotFoundError("Incorrect email or password"));
       }
       res.send({
         token: jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "7d" }),
