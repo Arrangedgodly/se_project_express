@@ -9,13 +9,14 @@ const userRouter = require("./routes/users");
 const clothingItemsRouter = require("./routes/clothingItems");
 const { createUser, login } = require("./controllers/users");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
-const validateURL = require('./middlewares/validators');
+const validateURL = require("./middlewares/validators");
 
 const allowedCors = [
-  'https://graydonwasil.students.nomoredomainssbs.ru/',
-  'https://www.graydonwasil.students.nomoredomainssbs.ru/',
-  'localhost:3000'
+  "https://graydonwasil.students.nomoredomainssbs.ru",
+  "https://www.graydonwasil.students.nomoredomainssbs.ru",
+  "localhost:3000",
 ];
+const DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE";
 
 const app = express();
 
@@ -34,16 +35,20 @@ app.use(cors());
 
 app.use(requestLogger);
 
-app.get('/crash-test', () => {
+app.get("/crash-test", () => {
   setTimeout(() => {
-    throw new Error('Server will crash now');
+    throw new Error("Server will crash now");
   }, 0);
 });
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   const { origin } = req.headers;
+  const { method } = req;
   if (allowedCors.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
+    res.header("Access-Control-Allow-Origin", origin);
+  }
+  if (method === "OPTIONS") {
+    res.header("Access-Control-Allow-Methods", DEFAULT_ALLOWED_METHODS);
   }
 
   next();
