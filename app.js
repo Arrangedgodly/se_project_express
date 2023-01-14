@@ -11,6 +11,12 @@ const { createUser, login } = require("./controllers/users");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 const validateURL = require('./middlewares/validators');
 
+const allowedCors = [
+  'https://graydonwasil.students.nomoredomainssbs.ru/',
+  'https://www.graydonwasil.students.nomoredomainssbs.ru/',
+  'localhost:3000'
+];
+
 const app = express();
 
 const { PORT, DATABASE } = process.env;
@@ -27,6 +33,21 @@ app.use(helmet());
 app.use(cors());
 
 app.use(requestLogger);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Server will crash now');
+  }, 0);
+});
+
+app.use(function(req, res, next) {
+  const { origin } = req.headers;
+  if (allowedCors.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+
+  next();
+});
 
 app.post(
   "/signin",
