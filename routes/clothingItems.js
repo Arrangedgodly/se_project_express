@@ -19,6 +19,7 @@ router.post(
       name: Joi.string().required().min(2).max(30),
       weather: Joi.string().valid("hot", "warm", "cold", "sunny").required(),
       imageUrl: Joi.string().required().custom(validateURL),
+      id: Joi.number()
     }),
   }),
   auth,
