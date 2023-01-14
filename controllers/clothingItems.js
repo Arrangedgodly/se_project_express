@@ -7,8 +7,9 @@ module.exports.getClothingItems = (req, res) => {
     .then((items) => {
       if (!items) {
         next(new NotFoundError("There were no items found"));
+      } else {
+        return res.send(items);
       }
-      res.send(items);
     })
     .catch(next);
 };
@@ -21,7 +22,9 @@ module.exports.createClothingItem = (req, res) => {
     imageUrl,
     owner: req.user,
   })
-    .then((item) => res.status(201).send(item))
+    .then((item) => {
+      return res.status(201).send(item);
+    })
     .catch(next);
 };
 
@@ -30,11 +33,14 @@ module.exports.deleteClothingItem = (req, res) => {
     .orFail()
     .then((item) => {
       if (item.owner.equals(req.user._id)) {
-        return item.remove(() => res.send({ clothingItem: item }));
+        return item.remove(() => {
+          res.send(item);
+        });
+      } else {
+        next(
+          new PermissionsError("You do not have permission to delete this item")
+        );
       }
-      next(
-        new PermissionsError("You do not have permission to delete this item")
-      );
     })
     .catch(next);
 };
@@ -46,7 +52,9 @@ module.exports.likeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((data) => res.send(data))
+    .then((data) => {
+      return res.send(data);
+    })
     .catch(next);
 };
 
@@ -57,6 +65,8 @@ module.exports.dislikeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((data) => res.send(data))
+    .then((data) => {
+      return res.send(data);
+    })
     .catch(next);
 };
