@@ -41,7 +41,7 @@ app.get("/crash-test", () => {
   }, 0);
 });
 
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   const { origin } = req.headers;
   const { method } = req;
   if (allowedCors.includes(origin)) {
@@ -49,6 +49,7 @@ app.use(function (req, res, next) {
   }
   if (method === "OPTIONS") {
     res.header("Access-Control-Allow-Methods", DEFAULT_ALLOWED_METHODS);
+    return res.end();
   }
 
   next();
