@@ -19,6 +19,8 @@ const allowedOrigins = [
 
 const app = express();
 
+/*
+
 app.use((req, res, next) => {
   const { origin } = req.headers;
 
@@ -44,6 +46,8 @@ app.use((req, res, next) => {
 
   next();
 });
+
+*/
 
 const { PORT, DATABASE } = process.env;
 
