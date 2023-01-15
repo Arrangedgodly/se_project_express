@@ -16,6 +16,7 @@ const allowedCors = [
   "https://www.graydonwasil.students.nomoredomainssbs.ru",
   "localhost:3000",
 ];
+const DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE";
 
 const app = express();
 
@@ -31,7 +32,8 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(cors({
-  origin: allowedCors
+  "origin": allowedCors,
+  "methods": DEFAULT_ALLOWED_METHODS
 }));
 
 app.use(requestLogger);
