@@ -1,9 +1,10 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+
 const { JWT_SECRET } = process.env;
-const NotFoundError = require("../errors/not-found-err");
-const ExistingError = require("../errors/existing-err");
+const NotFoundError = require('../errors/not-found-err');
+const ExistingError = require('../errors/existing-err');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -16,7 +17,7 @@ module.exports.getCurrentUser = (req, res, next) => {
     .orFail()
     .then((user) => {
       if (!user) {
-        return next(new NotFoundError("No user with matching ID found"));
+        return next(new NotFoundError('No user with matching ID found'));
       }
 
       res.send(user);
@@ -33,12 +34,12 @@ module.exports.patchCurrentUser = (req, res, next) => {
       name,
       avatar,
     },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .orFail()
     .then((user) => {
       if (!user) {
-        return next(new NotFoundError("No user with matching ID found"));
+        return next(new NotFoundError('No user with matching ID found'));
       }
 
       res.send(user);
@@ -47,31 +48,29 @@ module.exports.patchCurrentUser = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const { name, avatar, email, password } = req.body;
+  const {
+    name, avatar, email, password,
+  } = req.body;
   User.findOne({ email }).then((user) => {
     if (user) {
       return next(
         new ExistingError(
-          "There is already a user existing with this email address"
-        )
+          'There is already a user existing with this email address',
+        ),
       );
     }
-    return bcrypt.hash(password, 10).then((hash) =>
-      User.create({
-        name,
-        avatar,
-        email,
-        password: hash,
-      })
-        .then((newUser) =>
-          res.send({
-            name: newUser.name,
-            email: newUser.email,
-            avatar: newUser.avatar,
-          })
-        )
-        .catch(next)
-    );
+    return bcrypt.hash(password, 10).then((hash) => User.create({
+      name,
+      avatar,
+      email,
+      password: hash,
+    })
+      .then((newUser) => res.send({
+        name: newUser.name,
+        email: newUser.email,
+        avatar: newUser.avatar,
+      }))
+      .catch(next));
   });
 };
 
@@ -81,10 +80,10 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password, next)
     .then((user) => {
       if (!user) {
-        return next(new NotFoundError("Incorrect email or password"));
+        return next(new NotFoundError('Incorrect email or password'));
       }
       res.send({
-        token: jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "7d" }),
+        token: jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' }),
       });
     })
     .catch(next);

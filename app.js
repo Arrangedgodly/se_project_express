@@ -1,19 +1,20 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const { celebrate, Joi, errors } = require("celebrate");
-const helmet = require("helmet");
-const cors = require("cors");
-const userRouter = require("./routes/users");
-const clothingItemsRouter = require("./routes/clothingItems");
-const { createUser, login } = require("./controllers/users");
-const { requestLogger, errorLogger } = require("./middlewares/logger");
-const validateURL = require("./middlewares/validators");
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const { celebrate, Joi, errors } = require('celebrate');
+const helmet = require('helmet');
+const cors = require('cors');
+const userRouter = require('./routes/users');
+const clothingItemsRouter = require('./routes/clothingItems');
+const { createUser, login } = require('./controllers/users');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+const validateURL = require('./middlewares/validators');
+
 const allowedOrigins = [
-  "https://graydonwasil.students.nomoredomainssbs.ru",
-  "https://www.graydonwasil.students.nomoredomainssbs.ru",
-  "http://localhost:3000",
+  'https://graydonwasil.students.nomoredomainssbs.ru',
+  'https://www.graydonwasil.students.nomoredomainssbs.ru',
+  'http://localhost:3000',
 ];
 
 const app = express();
@@ -33,9 +34,9 @@ app.use(cors());
 
 app.use(requestLogger);
 
-app.get("/crash-test", () => {
+app.get('/crash-test', () => {
   setTimeout(() => {
-    throw new Error("Server will crash now");
+    throw new Error('Server will crash now');
   }, 0);
 });
 
@@ -49,34 +50,34 @@ app.use((req, res, next) => {
   }
 
   next();
-})
+});
 
 app.use((req, res, next) => {
   const { method } = req;
 
   console.log(method);
 
-  const DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE";
+  const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 
   if (method === 'OPTIONS') {
     res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
-} 
+  }
 
   next();
-})
+});
 
 app.post(
-  "/signin",
+  '/signin',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().email().required(),
       password: Joi.string().required(),
     }),
   }),
-  login
+  login,
 );
 app.post(
-  "/signup",
+  '/signup',
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
@@ -85,12 +86,12 @@ app.post(
       password: Joi.string().required(),
     }),
   }),
-  createUser
+  createUser,
 );
 
-app.use("/users", userRouter);
+app.use('/users', userRouter);
 
-app.use("/items", clothingItemsRouter);
+app.use('/items', clothingItemsRouter);
 
 app.use(errorLogger);
 
@@ -100,10 +101,10 @@ app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   console.error(err);
   res.status(statusCode).send({
-    message: statusCode === 500 ? "An error occurred on the server" : message,
+    message: statusCode === 500 ? 'An error occurred on the server' : message,
   });
 });
 
-app.use("*", (req, res) => {
-  res.status(404).send({ message: "Requested resource not found" });
+app.use('*', (req, res) => {
+  res.status(404).send({ message: 'Requested resource not found' });
 });
