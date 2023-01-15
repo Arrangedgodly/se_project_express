@@ -18,7 +18,6 @@ const allowedOrigins = [
 ];
 
 const app = express();
-app.use(cors({ origin: allowedOrigins }));
 
 const { PORT, DATABASE } = process.env;
 
@@ -31,6 +30,7 @@ app.listen(PORT, () => {
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
+app.use(cors({ origin: allowedOrigins }));
 
 app.use(requestLogger);
 
