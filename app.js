@@ -11,13 +11,6 @@ const { createUser, login } = require("./controllers/users");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 const validateURL = require("./middlewares/validators");
 
-const allowedCors = [
-  "https://graydonwasil.students.nomoredomainssbs.ru",
-  "https://www.graydonwasil.students.nomoredomainssbs.ru",
-  "localhost:3000",
-];
-const DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE";
-
 const app = express();
 
 const { PORT, DATABASE } = process.env;
@@ -31,10 +24,7 @@ app.listen(PORT, () => {
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
-app.use(cors({
-  "origin": allowedCors,
-  "methods": DEFAULT_ALLOWED_METHODS
-}));
+app.use(cors());
 
 app.use(requestLogger);
 
@@ -42,20 +32,6 @@ app.get("/crash-test", () => {
   setTimeout(() => {
     throw new Error("Server will crash now");
   }, 0);
-});
-
-app.use((req, res, next) => {
-  const { origin } = req.headers;
-  const { method } = req;
-  if (allowedCors.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-  }
-  if (method === "OPTIONS") {
-    res.header("Access-Control-Allow-Methods", DEFAULT_ALLOWED_METHODS);
-    return res.end();
-  }
-
-  next();
 });
 
 app.post(
