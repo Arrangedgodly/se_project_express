@@ -13,37 +13,11 @@ const validateURL = require('./middlewares/validators');
 
 const allowedOrigins = [
   'https://graydonwasil.students.nomoredomainssbs.ru',
-  'https://www.graydonwasil.students.nomoredomainssbs.ru',
+  'http://graydonwasil.students.nomoredomainssbs.ru',
   'http://localhost:3000',
 ];
 
 const app = express();
-
-app.use((req, res, next) => {
-  const { origin } = req.headers;
-
-  console.log(origin);
-
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-
-  next();
-});
-
-app.use((req, res, next) => {
-  const { method } = req;
-
-  console.log(method);
-
-  const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
-
-  if (method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
-  }
-
-  next();
-});
 
 const { PORT, DATABASE } = process.env;
 
@@ -56,6 +30,7 @@ app.listen(PORT, () => {
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
+app.use(cors({ origin: allowedOrigins }));
 
 app.use(requestLogger);
 
