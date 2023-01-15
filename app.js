@@ -27,10 +27,10 @@ app.listen(PORT, () => {
   console.log(`App live and listening at port ${PORT}`);
 });
 
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
-app.use(cors({ origin: allowedOrigins }));
 
 app.use(requestLogger);
 
