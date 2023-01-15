@@ -19,27 +19,6 @@ const allowedOrigins = [
 
 const app = express();
 
-const { PORT, DATABASE } = process.env;
-
-mongoose.connect(DATABASE);
-
-app.listen(PORT, () => {
-  console.log(`App live and listening at port ${PORT}`);
-});
-
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(helmet());
-app.use(cors());
-
-app.use(requestLogger);
-
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Server will crash now');
-  }, 0);
-});
-
 app.use((req, res, next) => {
   const { origin } = req.headers;
 
@@ -64,6 +43,27 @@ app.use((req, res, next) => {
   }
 
   next();
+});
+
+const { PORT, DATABASE } = process.env;
+
+mongoose.connect(DATABASE);
+
+app.listen(PORT, () => {
+  console.log(`App live and listening at port ${PORT}`);
+});
+
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(helmet());
+app.use(cors());
+
+app.use(requestLogger);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Server will crash now');
+  }, 0);
 });
 
 app.post(
