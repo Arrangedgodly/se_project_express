@@ -11,8 +11,8 @@ const { createUser, login } = require("./controllers/users");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 const validateURL = require("./middlewares/validators");
 const allowedOrigins = [
-  "https://graydonwasil.students.nomoredomainssbs.ru/",
-  "https://www.graydonwasil.students.nomoredomainssbs.ru/",
+  "https://graydonwasil.students.nomoredomainssbs.ru",
+  "https://www.graydonwasil.students.nomoredomainssbs.ru",
   "http://localhost:3000",
 ];
 
@@ -42,6 +42,8 @@ app.get("/crash-test", () => {
 app.use((req, res, next) => {
   const { origin } = req.headers;
 
+  console.log(origin);
+
   if (allowedOrigins.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
   }
@@ -51,6 +53,8 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
   const { method } = req;
+
+  console.log(method);
 
   const DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE";
 
