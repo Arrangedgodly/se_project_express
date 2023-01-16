@@ -10,6 +10,7 @@ const clothingItemsRouter = require('./routes/clothingItems');
 const { createUser, login } = require('./controllers/users');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const validateURL = require('./middlewares/validators');
+const NotFoundError = require('./errors/not-found-err');
 
 const allowedOrigins = [
   'https://graydonwasil.students.nomoredomainssbs.ru',
@@ -66,6 +67,10 @@ app.post(
 app.use('/users', userRouter);
 
 app.use('/items', clothingItemsRouter);
+
+app.use('*', () => {
+  throw new NotFoundError('There was no API command found at this URL');
+});
 
 app.use(errorLogger);
 
