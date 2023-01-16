@@ -2,9 +2,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET = '0c4ae04e510419153d1cd2e66c2f85e6cd30282b85e568053db8c6aef75087e3' } = process.env;
 const NotFoundError = require('../errors/not-found-err');
 const ExistingError = require('../errors/existing-err');
+const AuthError = require('../errors/auth-err');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -20,7 +21,7 @@ module.exports.getCurrentUser = (req, res, next) => {
         return next(new NotFoundError('No user with matching ID found'));
       }
 
-      res.send(user);
+      return res.send(user);
     })
 
     .catch(next);
@@ -42,7 +43,7 @@ module.exports.patchCurrentUser = (req, res, next) => {
         return next(new NotFoundError('No user with matching ID found'));
       }
 
-      res.send(user);
+      return res.send(user);
     })
     .catch(next);
 };
@@ -80,9 +81,9 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password, next)
     .then((user) => {
       if (!user) {
-        return next(new NotFoundError('Incorrect email or password'));
+        return next(new AuthError('Incorrect email or password'));
       }
-      res.send({
+      return res.send({
         token: jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' }),
       });
     })

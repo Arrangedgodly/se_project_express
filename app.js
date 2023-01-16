@@ -19,7 +19,7 @@ const allowedOrigins = [
 
 const app = express();
 
-const { PORT, DATABASE } = process.env;
+const { PORT = '3001', DATABASE = 'mongodb://localhost:27017/wtwr_db' } = process.env;
 
 mongoose.connect(DATABASE);
 
@@ -77,8 +77,4 @@ app.use((err, req, res, next) => {
   res.status(statusCode).send({
     message: statusCode === 500 ? 'An error occurred on the server' : message,
   });
-});
-
-app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Requested resource not found' });
 });

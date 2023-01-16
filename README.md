@@ -1,6 +1,9 @@
 # WTWR (What to Wear?): Back End
 The back-end for the WTWR project through Practicum.
 
+## Link to the Server
+The server can be found [here](https://api.graydonwasil.students.nomoredomainssbs.ru/)
+
 ## Project Features
 * User Authentication / Password Hashing System
   - Utilizes jsonwebtoken and bcrypt to privately authorize users and allow access to the API
